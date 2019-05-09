@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>Kmd.Logic.Consumption.Client.Sample</AssemblyName>
+    <RootNamespace>Kmd.Logic.Consumption.Client.Sample</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kmd.Logic.Audit.Client.SerilogAzureEventHubs" Version="1.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Kmd.Logic.Consumption.Client.AuditClient\Kmd.Logic.Consumption.Client.AuditClient.csproj" />
+    <ProjectReference Include="..\..\src\Kmd.Logic.Consumption.Client\Kmd.Logic.Consumption.Client.csproj" />
+  </ItemGroup>
+
+</Project>
