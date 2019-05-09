@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Logic.Consumption.Client", "src\Kmd.Logic.Consumption.Client\Kmd.Logic.Consumption.Client.csproj", "{82C1F757-109A-40A7-8268-84CC3A249DFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BB2479FF-5DEC-4A78-A59F-C917F60F377B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{9D933673-157D-4C45-8C89-81085A5E99F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kmd-logic-consumption-client.sample", "sample\kmd-logic-consumption-client.sample\kmd-logic-consumption-client.sample.csproj", "{33966829-2B7F-4F84-8D23-81EBCB180D6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9B0D548B-CCEB-4C61-B5D3-C466534BF4BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82C1F757-109A-40A7-8268-84CC3A249DFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82C1F757-109A-40A7-8268-84CC3A249DFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82C1F757-109A-40A7-8268-84CC3A249DFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82C1F757-109A-40A7-8268-84CC3A249DFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33966829-2B7F-4F84-8D23-81EBCB180D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33966829-2B7F-4F84-8D23-81EBCB180D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33966829-2B7F-4F84-8D23-81EBCB180D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33966829-2B7F-4F84-8D23-81EBCB180D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82C1F757-109A-40A7-8268-84CC3A249DFE} = {BB2479FF-5DEC-4A78-A59F-C917F60F377B}
+		{33966829-2B7F-4F84-8D23-81EBCB180D6B} = {9D933673-157D-4C45-8C89-81085A5E99F4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C03872C2-92F5-48B8-AA12-76BEFEEA0319}
+	EndGlobalSection
+EndGlobal
