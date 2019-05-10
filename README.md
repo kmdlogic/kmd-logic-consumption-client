@@ -19,11 +19,17 @@ consumption
               consumptionAmount: +1);
 ```
 
-In your applications `Main()`, or `Startup.ConfigureServices()` or other [composition root](http://blog.ploeh.dk/2011/07/28/CompositionRoot/), create a singleton instance of `**Kmd.Logic.Consumption.Client**` and use it as the implementation of `IConsumptionMetrics` and `IConsumptionMetricsDestination` by injecting it into your container or exposing it as a static property or method. Since `**SerilogAzureEventHubsAuditClient**` is thread-safe and requires disposal, it would be appropriate to use a singleton lifetime in a DI container that will dispose of it upon application shut down.
+In your applications `Main()`, or `Startup.ConfigureServices()` or other [composition root](http://blog.ploeh.dk/2011/07/28/CompositionRoot/), create a singleton instance of `Kmd.Logic.Consumption.Client` and use it as the implementation of `IConsumptionMetrics` and `IConsumptionMetricsDestination` by injecting it into your container or exposing it as a static property or method. Since `SerilogAzureEventHubsAuditClient` is thread-safe and requires disposal, it would be appropriate to use a singleton lifetime in a DI container that will dispose of it upon application shut down.
 
 To demonstrate this without a DI container:
 
 ```csharp
+var clientConfig = new SerilogAzureEventHubsAuditClientConfiguration
+            {
+                ConnectionString = @"Endpoint=sb://client-eventhub.servicebus.windows.net/;SharedAccessKeyName=primaryAuditIngestKey;SharedAccessKey=clientkey;EntityPath=audit",
+                EnrichFromLogContext = true
+            };
+
  using (var serilogAzureEventHubsAuditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
                 IConsumptionMetricsDestination consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogAzureEventHubsAuditClient);
