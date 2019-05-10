@@ -28,8 +28,8 @@ namespace Kmd.Logic.Consumption.Client.Sample
                 IConsumptionMetrics consumption = new ConsumptionClient(consumptionDestination);
                 Parallel.For(0, 10, t =>
                 {
-                    consumption.ForContext("ResourceType", resourceType)
-                            .ForContext("ResourceName", resourceName)
+                    consumption.ForContextReport("ResourceType", resourceType)
+                            .ForContextReport("ResourceName", resourceName)
                             .Record(
                                 subscriptionId: subscriptionId,
                                 resourceId: resourceId,

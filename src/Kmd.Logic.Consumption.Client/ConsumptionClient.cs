@@ -19,6 +19,14 @@ namespace Kmd.Logic.Consumption.Client
                     value: value));
         }
 
+        public IConsumptionMetrics ForContextReport(string name, string value)
+        {
+            return new ConsumptionClient(this.destination
+                .ForContext(
+                    propertyName: name,
+                    value: value));
+        }
+
         public void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null)
         {
             this.destination
