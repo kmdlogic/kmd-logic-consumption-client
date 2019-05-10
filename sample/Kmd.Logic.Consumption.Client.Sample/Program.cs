@@ -16,28 +16,27 @@ namespace Kmd.Logic.Consumption.Client.Sample
                 EnrichFromLogContext = true
             };
 
-            var serilogSeqAuditClient = new SerilogAzureEventHubsAuditClient(clientConfig);
-            IConsumptionMetricsDestination consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogSeqAuditClient);
-            IConsumptionMetrics consumption = new ConsumptionClient(consumptionDestination);
             var subscriptionId = Guid.NewGuid();
             var resourceId = Guid.NewGuid();
             var consumptionType = "Sent to BYO Provider";
             var resourceType = "SMS";
             var resourceName = "FRIE PROD";
 
-            Parallel.For(0, 10, t =>
+            using (var serilogAzureEventHubsAuditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
-                string messageId = Guid.NewGuid().ToString();
-                Console.WriteLine($"Sms sent to provider {messageId}");
-
-                consumption.ForContext("ResourceType", resourceType)
-                        .ForContext("ResourceName", resourceName)
-                        .Record(
-                            subscriptionId: subscriptionId,
-                            resourceId: resourceId,
-                            consumptionType: consumptionType,
-                            consumptionAmount: +10);
-            });
+                IConsumptionMetricsDestination consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogAzureEventHubsAuditClient);
+                IConsumptionMetrics consumption = new ConsumptionClient(consumptionDestination);
+                Parallel.For(0, 10, t =>
+                {
+                    consumption.ForContext("ResourceType", resourceType)
+                            .ForContext("ResourceName", resourceName)
+                            .Record(
+                                subscriptionId: subscriptionId,
+                                resourceId: resourceId,
+                                consumptionType: consumptionType,
+                                consumptionAmount: +10);
+                });
+            }
         }
     }
 }
