@@ -25,7 +25,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             var resourceType = "SMS";
             var resourceName = "FRIE PROD";
 
-            Parallel.For(0, 1, t =>
+            Parallel.For(0, 10, t =>
             {
                 string messageId = Guid.NewGuid().ToString();
                 Console.WriteLine($"Sms sent to provider {messageId}");
