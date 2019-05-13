@@ -13,7 +13,15 @@ namespace Kmd.Logic.Consumption.Client
 
         public IConsumptionMetrics ForContext(string name, string value)
         {
-            return new ConsumptionClient(destination
+            return new ConsumptionClient(this.destination
+                .ForContext(
+                    propertyName: name,
+                    value: value));
+        }
+
+        public IConsumptionMetrics ForContextReport(string name, string value)
+        {
+            return new ConsumptionClient(this.destination
                 .ForContext(
                     propertyName: name,
                     value: value));
@@ -21,9 +29,8 @@ namespace Kmd.Logic.Consumption.Client
 
         public void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null)
         {
-            destination
-                .Write("Consumed {ConsumptionAmount} for {ConsumptionType} on resource {ResourceId} in subscription {SubscriptionId}",
-                consumptionAmount, consumptionType, subscriptionId, resourceId);
+            this.destination
+                .Write("Consumed {ConsumptionAmount} for {ConsumptionType} on resource {ResourceId} in subscription {SubscriptionId}", consumptionAmount, consumptionType, subscriptionId, resourceId);
         }
     }
 }

@@ -7,5 +7,7 @@ namespace Kmd.Logic.Consumption.Client
         void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null);
 
         IConsumptionMetrics ForContext(string name, string value);
+
+        IConsumptionMetrics ForContextReport(string name, string value);
     }
 }
