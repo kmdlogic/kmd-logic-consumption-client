@@ -12,14 +12,15 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
             this.audit = audit ?? throw new ArgumentNullException(nameof(audit));
         }
 
-        public IConsumptionMetricsDestination ForContext(string propertyName, string value)
+        public IConsumptionMetricsDestination ForInternalContext(string propertyName, string value)
         {
             return new AuditClientConsumptionMetricsDestination(this.audit.ForContext(propertyName, value));
         }
 
-        public IConsumptionMetricsDestination ForContextReport(string propertyName, string value)
+        public IConsumptionMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value)
         {
-            return new AuditClientConsumptionMetricsDestination(this.audit.ForContext(propertyName, value));
+            return new AuditClientConsumptionMetricsDestination(
+                this.audit.ForContext($"__Sub_{propertyName}", value));
         }
 
         public void Write(string messageTemplate, params object[] propertyValues)

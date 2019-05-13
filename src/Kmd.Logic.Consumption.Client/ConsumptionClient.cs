@@ -11,26 +11,31 @@ namespace Kmd.Logic.Consumption.Client
             this.destination = destination ?? throw new ArgumentNullException(nameof(destination));
         }
 
-        public IConsumptionMetrics ForContext(string name, string value)
+        public IConsumptionMetrics ForInternalContext(string name, string value)
         {
             return new ConsumptionClient(this.destination
-                .ForContext(
+                .ForInternalContext(
                     propertyName: name,
                     value: value));
         }
 
-        public IConsumptionMetrics ForContextReport(string name, string value)
+        public IConsumptionMetrics ForSubscriptionOwnerContext(string name, string value)
         {
             return new ConsumptionClient(this.destination
-                .ForContext(
+                .ForSubscriptionOwnerContext(
                     propertyName: name,
                     value: value));
         }
 
         public void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null)
         {
-            this.destination
-                .Write("Consumed {ConsumptionAmount} for {ConsumptionType} on resource {ResourceId} in subscription {SubscriptionId}", consumptionAmount, consumptionType, subscriptionId, resourceId);
+            var dest = this.destination;
+            if (!string.IsNullOrEmpty(reason))
+            {
+                dest = dest.ForInternalContext("RecordReason", reason);
+            }
+
+            dest.Write("Consumed {ConsumptionAmount} for {ConsumptionType} on resource {ResourceId} in subscription {SubscriptionId}", consumptionAmount, consumptionType, subscriptionId, resourceId);
         }
     }
 }

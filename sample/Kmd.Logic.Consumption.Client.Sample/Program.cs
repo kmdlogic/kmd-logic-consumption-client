@@ -24,17 +24,18 @@ namespace Kmd.Logic.Consumption.Client.Sample
 
             using (var serilogAzureEventHubsAuditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
-                IConsumptionMetricsDestination consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogAzureEventHubsAuditClient);
-                IConsumptionMetrics consumption = new ConsumptionClient(consumptionDestination);
+                var consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogAzureEventHubsAuditClient);
+                var consumption = new ConsumptionClient(consumptionDestination);
                 Parallel.For(0, 10, t =>
                 {
-                    consumption.ForContextReport("ResourceType", resourceType)
-                            .ForContextReport("ResourceName", resourceName)
+                    consumption.ForSubscriptionOwnerContext("Resource Type", resourceType)
+                            .ForSubscriptionOwnerContext("Resource Name", resourceName)
                             .Record(
                                 subscriptionId: subscriptionId,
                                 resourceId: resourceId,
                                 consumptionType: consumptionType,
-                                consumptionAmount: +10);
+                                consumptionAmount: +10,
+                                reason: "Just testing");
                 });
             }
         }
