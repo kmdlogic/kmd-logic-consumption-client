@@ -7,19 +7,11 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/sample/kmd-logic-consumption-client.sample/kmd-logic-consumption-client.sample.csproj"
+                "--no-incremental",
+                "/p:GenerateFullPaths=true",
+                "${workspaceFolder}"
             ],
-            "problemMatcher": "$tsc"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/sample/kmd-logic-consumption-client.sample/kmd-logic-consumption-client.sample.csproj"
-            ],
-            "problemMatcher": "$tsc"
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "watch",
@@ -28,9 +20,9 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/sample/kmd-logic-consumption-client.sample/kmd-logic-consumption-client.sample.csproj"
+                "${workspaceFolder}/test/Kmd.Logic.Consumption.Tests"
             ],
-            "problemMatcher": "$tsc"
+            "problemMatcher": "$msCompile"
         }
     ]
 }
