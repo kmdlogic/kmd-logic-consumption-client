@@ -1,42 +1,70 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Kmd.Logic.Audit.Client.SerilogAzureEventHubs;
 using Kmd.Logic.Consumption.Client;
 using Kmd.Logic.Consumption.Client.AuditClient;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace Kmd.Logic.Consumption.Client.Sample
 {
     public static class Program
     {
-        public static void Main()
+        public static void Main(string[] args)
         {
+            var configSource = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>())
+                .AddCommandLine(args)
+                .Build();
+
+            var config = configSource.Get<AppConfig>();
+
+            if (string.IsNullOrEmpty(config.EventHubsConnectionString))
+            {
+                Log.Fatal("Please provider the connection string by: {Args}", "--EventHubsConnectionString=\"XXX\"");
+                return;
+            }
+
             var clientConfig = new SerilogAzureEventHubsAuditClientConfiguration
             {
-                ConnectionString = @"Endpoint=sb://kmdais-consumptiondev-eventhub.servicebus.windows.net/;SharedAccessKeyName=primaryAuditIngestKey;SharedAccessKey=BTz9MTaQs9dofKGGUyADIMKvhmyBSuIcsK748MiYIVA=;EntityPath=audit",
-                EnrichFromLogContext = true
+                ConnectionString = config.EventHubsConnectionString,
+                EventSource = config.EventSource ?? $"Consumption client sample on {Environment.MachineName}",
             };
 
-            var subscriptionId = Guid.NewGuid();
-            var resourceId = Guid.NewGuid();
-            var consumptionType = "Sent to BYO Provider";
-            var resourceType = "SMS";
-            var resourceName = "FRIE PROD";
+            var subscriptionId = config.ConsumptionData.SubscriptionId;
+            var resourceId = config.ConsumptionData.ResourceId;
+            var meter = config.ConsumptionData.Meter;
+            var resourceType = config.ConsumptionData.ResourceType;
+            var resourceName = config.ConsumptionData.ResourceName;
 
-            using (var serilogAzureEventHubsAuditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
+            using (var auditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
-                var consumptionDestination = new AuditClientConsumptionMetricsDestination(serilogAzureEventHubsAuditClient);
-                var consumption = new ConsumptionClient(consumptionDestination);
-                Parallel.For(0, 10, t =>
-                {
-                    consumption.ForSubscriptionOwnerContext("Resource Type", resourceType)
+                var auditConsumptionDestination = new AuditClientConsumptionMetricsDestination(auditClient);
+                var consumptionClient = new ConsumptionClient(auditConsumptionDestination);
+
+                Enumerable
+                    .Range(0, config.NumberOfEvents)
+                    .AsParallel()
+                    .WithDegreeOfParallelism(degreeOfParallelism: config.NumberOfThreads)
+                    .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+                    .Select(eventNumber =>
+                    {
+                        consumptionClient
+                            .ForSubscriptionOwnerContext("Resource Type", resourceType)
                             .ForSubscriptionOwnerContext("Resource Name", resourceName)
+                            .ForInternalContext("EventNumber", $"{eventNumber}")
                             .Record(
                                 subscriptionId: subscriptionId,
                                 resourceId: resourceId,
-                                consumptionType: consumptionType,
-                                consumptionAmount: +10,
-                                reason: "Just testing");
-                });
+                                meter: meter,
+                                amount: config.ConsumptionData.Amount,
+                                reason: config.ConsumptionData.Reason);
+
+                        return eventNumber;
+                    })
+                    .ToArray();
             }
         }
     }

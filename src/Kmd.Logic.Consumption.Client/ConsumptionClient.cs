@@ -27,15 +27,15 @@ namespace Kmd.Logic.Consumption.Client
                     value: value));
         }
 
-        public void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null)
+        public void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null)
         {
             var dest = this.destination;
             if (!string.IsNullOrEmpty(reason))
             {
-                dest = dest.ForInternalContext("RecordReason", reason);
+                dest = dest.ForInternalContext("Reason", reason);
             }
 
-            dest.Write("Consumed {ConsumptionAmount} for {ConsumptionType} on resource {ResourceId} in subscription {SubscriptionId}", consumptionAmount, consumptionType, subscriptionId, resourceId);
+            dest.Write("Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}", amount, meter, subscriptionId, resourceId);
         }
     }
 }

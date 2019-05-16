@@ -10,11 +10,13 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/sample/kmd-logic-consumption-client.sample/bin/Debug/netcoreapp2.2/kmd-logic-consumption-client.sample.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/sample/kmd-logic-consumption-client.sample",
+            "program": "${workspaceFolder}/sample/Kmd.Logic.Consumption.Client.Sample/bin/Debug/netcoreapp2.2/Kmd.Logic.Consumption.Client.Sample.dll",
+            "args": [
+                
+            ],
+            "cwd": "${workspaceFolder}/sample/Kmd.Logic.Consumption.Client.Sample",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {

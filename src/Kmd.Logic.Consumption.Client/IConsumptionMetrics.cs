@@ -6,14 +6,14 @@ namespace Kmd.Logic.Consumption.Client
     {
 #pragma warning disable SA1611
         /// <summary>
-        /// Record the consumption against the subscription and resource id using the specified
-        /// consumption type (and optionally give a free text reason).
+        /// Records the consumption amount against the meter in the subscription for the resource id
+        /// (and optionally give a free text reason).
         /// </summary>
         /// <remarks>
         /// When a subscription user has consumed resources (e.g. sent an SMS or performed a backup),
         /// we call this method to record what was "consumed".
         /// </remarks>
-        void Record(Guid subscriptionId, Guid resourceId, string consumptionType, int consumptionAmount, string reason = null);
+        void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null);
 
         /// <summary>
         /// Adds arbitrary property names and values (context) to the consumption metrics record. Use this method
