@@ -1,0 +1,37 @@
+version: '{build}'
+skip_tags: true
+image:
+  - Visual Studio 2017
+  - Ubuntu
+configuration: Release
+test: off
+build_script:
+- ps: ./build.ps1
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu
+  build_script:
+  - dotnet --info
+  - dotnet --list-sdks
+  - pwsh -v
+  - sh build.sh
+artifacts:
+- path: artifacts/Kmd.Logic.Consumption*.nupkg
+deploy:
+- provider: NuGet
+  api_key:
+    secure: ZHHP6iRTV5jYf/5K8TGTLPcsjIizChJz2zZnx6JakCUSixeHAoLZC0ho5RT0pHnp
+  skip_symbols: true
+  on:
+    branch: /^(master|dev)$/
+    CI_WINDOWS: true
+- provider: GitHub
+  auth_token:
+    secure: Gps7M2I9nmkgcYcaOKzYz8CpBNZrrtKDxYq88d9hZqx49oxeqasVEzkvXTnplaQD
+  artifact: /Kmd.Logic.Consumption.Client.*\.nupkg/
+  tag: v$(appveyor_build_version)
+  on:
+    branch: master
+    CI_WINDOWS: true
