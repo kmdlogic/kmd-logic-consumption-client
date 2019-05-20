@@ -18,7 +18,7 @@ for:
   - pwsh -v
   - sh build.sh
 artifacts:
-- path: artifacts/Kmd.Logic.Audit.Consumption*.nupkg
+- path: artifacts/Kmd.Logic.Consumption*.nupkg
 deploy:
 - provider: NuGet
   api_key:
