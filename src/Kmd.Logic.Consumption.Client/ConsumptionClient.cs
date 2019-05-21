@@ -35,7 +35,7 @@ namespace Kmd.Logic.Consumption.Client
                 dest = dest.ForInternalContext("Reason", reason);
             }
 
-            dest.Write("Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}", amount, meter, subscriptionId, resourceId);
+            dest.Write("Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}", amount, meter, resourceId, subscriptionId);
         }
     }
 }
