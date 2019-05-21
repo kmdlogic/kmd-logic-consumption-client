@@ -8,9 +8,15 @@ namespace Kmd.Logic.Consumption.Client.Tests
     public class ConsumptionTests
     {
         [Fact]
-        public void ConsumptionTestsExists()
+        public void ConsumptionMetricsTestsExists()
         {
             Assert.NotNull(typeof(IConsumptionMetrics));
+        }
+
+        [Fact]
+        public void ConsumptionMetricsDestinationExists()
+        {
+            Assert.NotNull(typeof(IConsumptionMetricsDestination));
         }
     }
 }
