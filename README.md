@@ -22,11 +22,11 @@ consumptionClient
 
  * Add **Kmd.Logic.Consumption.Client.AuditClient** library from nuget package [Consumption Audit Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client.AuditClient/) to consume Audit client destination which is implemented `IConsumptionMetricsDestination`.
 
-The container(destination) will vary based on customer's implementation . Here we are referring the container(destination)  **kmd.logic.audit.client.serilogazureeventhubs**. This library can be downloaded from [Serilog Azure Eventhubs](https://www.nuget.org/packages/Kmd.Logic.Audit.Client.SerilogAzureEventHubs/). Consumer can change the exiting destination by using defined destination. Example as in below:
+The container(destination) will vary based on customer's implementation . Here we are referring the container(destination)  **kmd.logic.audit.client.serilogazureeventhubs**. This library can be downloaded from [Serilog Azure Eventhubs](https://www.nuget.org/packages/Kmd.Logic.Audit.Client.SerilogAzureEventHubs/). Consumer can change the exiting destination by using defined destination. The defined destination has to be injected into concrete class of `IConsumptionMetrics`. Example as in below:
 ```csharp
 var auditClient = new SerilogAzureEventHubsAuditClient(clientConfig);            
 var auditConsumptionDestination = new AuditClientConsumptionMetricsDestination(auditClient);
-            
+var consumptionClient = new ConsumptionClient(auditConsumptionDestination);         
 ```
 
 
