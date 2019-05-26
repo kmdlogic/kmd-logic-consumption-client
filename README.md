@@ -13,7 +13,7 @@ In projects or components where you need to *generate* consumption metrics, add 
 ```csharp
 consumption
     .ForSubscriptionOwnerContext("ReportableField", "Anything")
-    .ForInternalContext("EventNumber", "${eventNumber}")
+    .ForInternalContext("EventNumber", $"{eventNumber}")
     .Record(
         subscriptionId: subscriptionId,
         resourceId: resourceId,
