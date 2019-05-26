@@ -39,7 +39,7 @@ namespace Kmd.Logic.Consumption.Client
         /// <remarks>
         /// The same as <see cref="ForInternalContext" /> however any contextual properties added via this
         /// method will be visible by the subscription owners too. Always use this to provide additional
-        /// data to subsription owners so that they will understand how the consumption happened and what
+        /// data to subscription owners so that they will understand how the consumption happened and what
         /// it applies to.
         /// </remarks>
         /// <returns>An instance with the additional context values included.</returns>

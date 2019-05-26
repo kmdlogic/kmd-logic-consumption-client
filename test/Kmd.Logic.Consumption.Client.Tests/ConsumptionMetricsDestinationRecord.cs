@@ -1,29 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Kmd.Logic.Consumption.Client.Tests
 {
     public class ConsumptionMetricsDestinationRecord
     {
         public ConsumptionMetricsDestinationRecord(
-            string messageTemplate,
-            object[] args,
+            Guid subscriptionId,
+            Guid resourceId,
+            string meter,
+            int amount,
+            string reason,
             IDictionary<string, string> internalContext,
             IDictionary<string, string> subscriptionOwnerContext)
         {
-            this.MessageTemplate = messageTemplate;
-            this.MessageTemplateArgs = args;
+            this.SubscriptionId = subscriptionId;
+            this.ResourceId = resourceId;
+            this.Meter = meter;
+            this.Amount = amount;
+            this.Reason = reason;
             this.InternalContext = internalContext;
             this.SubscriptionOwnerContext = subscriptionOwnerContext;
         }
 
-        public string MessageTemplate { get; }
+        public Guid SubscriptionId { get; }
 
-        private object[] MessageTemplateArgs { get; }
+        public Guid ResourceId { get; }
 
-        public object[] GetMessageTemplateArgs()
-        {
-            return this.MessageTemplateArgs;
-        }
+        public string Meter { get; }
+
+        public int Amount { get; }
+
+        public string Reason { get; }
 
         public IDictionary<string, string> InternalContext { get; }
 

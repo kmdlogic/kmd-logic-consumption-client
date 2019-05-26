@@ -10,154 +10,90 @@ namespace Kmd.Logic.Consumption.Client.Tests
 {
     public class ConsumptionMetricsTests
     {
-        private readonly ITestOutputHelper output;
-
-        public ConsumptionMetricsTests(ITestOutputHelper output)
-        {
-            this.output = output;
-        }
-
-        public static ConsumptionMetricsDestinationRecord TestRecord(
-               Guid subscriptionId,
-               Guid resourceId,
-               string meter,
-               int amount,
-               string reason,
-               IDictionary<string, string> internalContext,
-               IDictionary<string, string> subOwnerContext)
+        public static ConsumptionMetricsDestinationRecord CaptureDestinationRecord(
+            Guid subscriptionId,
+            Guid resourceId,
+            string meter,
+            int amount,
+            string reason,
+            IDictionary<string, string> internalContext,
+            IDictionary<string, string> subOwnerContext)
         {
             var mockedDestination = new Mock<IConsumptionMetricsDestination>();
+
             var capturedInternalContext = new Dictionary<string, string>();
             mockedDestination
-             .Setup(d => d.ForInternalContext(It.IsAny<string>(), It.IsAny<string>()))
-             .Callback((string propertyName, string value) => capturedInternalContext.Add(propertyName, value))
-             .Returns(mockedDestination.Object);
+                .Setup(d => d.ForInternalContext(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback((string propertyName, string value) => capturedInternalContext.Add(propertyName, value))
+                .Returns(mockedDestination.Object);
 
-            var capturedSubContext = new Dictionary<string, string>();
+            var capturedSubOwnerContext = new Dictionary<string, string>();
+            mockedDestination
+                .Setup(d => d.ForSubscriptionOwnerContext(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback((string propertyName, string value) => capturedSubOwnerContext.Add(propertyName, value))
+                .Returns(mockedDestination.Object);
+
+            var capturedSubscriptionId = default(Guid);
+            var capturedResourceId = default(Guid);
+            var capturedMeter = default(string);
+            var capturedAmount = default(int);
+            var capturedReason = default(string);
 
             mockedDestination
-             .Setup(d => d.ForSubscriptionOwnerContext(It.IsAny<string>(), It.IsAny<string>()))
-             .Callback((string propertyName, string value) => capturedSubContext.Add(propertyName, value))
-             .Returns(mockedDestination.Object);
+                .Setup(d => d.Write(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
+                .Callback((Guid callbackSubscriptionId, Guid callbackResourceId, string callbackMeter, int callbackAmount, string callbackReason) =>
+                    (capturedSubscriptionId, capturedResourceId, capturedMeter, capturedAmount, capturedReason) =
+                        (callbackSubscriptionId, callbackResourceId, callbackMeter, callbackAmount, callbackReason));
 
-            var capturedMessageTemplate = default(string);
-
-            var capturedArgs = default(object[]);
-            mockedDestination
-             .Setup(d => d.Write(It.IsAny<string>(), It.IsAny<object[]>()))
-             .Callback((string template, object[] args) =>
-             {
-                 capturedMessageTemplate = template;
-                 capturedArgs = args;
-             });
-
-            IConsumptionMetrics consumption = new ConsumptionClient(mockedDestination.Object);
-            if (internalContext != null)
-            {
-                consumption = internalContext.Aggregate(consumption, (clientWithContext, kvp) => clientWithContext.ForInternalContext(kvp.Key, kvp.Value));
-            }
-
-            if (subOwnerContext != null)
-            {
-                consumption = subOwnerContext.Aggregate(consumption, (clientWithContext, kvp) => clientWithContext.ForSubscriptionOwnerContext(kvp.Key, kvp.Value));
-            }
+            IConsumptionMetrics consumption = new ConsumptionMetrics(mockedDestination.Object);
+            consumption = internalContext?.Aggregate(consumption, (client, kvp) => client.ForInternalContext(kvp.Key, kvp.Value)) ?? consumption;
+            consumption = subOwnerContext?.Aggregate(consumption, (client, kvp) => client.ForSubscriptionOwnerContext(kvp.Key, kvp.Value)) ?? consumption;
 
             consumption.Record(subscriptionId, resourceId, meter, amount, reason);
 
             return new ConsumptionMetricsDestinationRecord(
-                messageTemplate: capturedMessageTemplate,
-                args: capturedArgs,
+                subscriptionId: capturedSubscriptionId,
+                resourceId: capturedResourceId,
+                meter: capturedMeter,
+                amount: capturedAmount,
+                reason: capturedReason,
                 internalContext: capturedInternalContext,
-                subscriptionOwnerContext: capturedSubContext);
+                subscriptionOwnerContext: capturedSubOwnerContext);
         }
 
         [Fact]
-        public void ConsumptionMetricsRecordedInteranlContext()
-        {
-            // Arrange
-            var groupId = Guid.NewGuid().ToString();
-            var subscriptionId = Guid.NewGuid();
-            var resourceId = Guid.NewGuid();
-            var meter = "SMS/BYO/Send SMS";
-
-            Dictionary<string, string> forInternalContext = new Dictionary<string, string>();
-            forInternalContext.Add("groupId", groupId);
-
-            // Act
-            var result = TestRecord(
-                    subscriptionId: subscriptionId,
-                    resourceId: resourceId,
-                    meter: meter,
-                    amount: 1,
-                    reason: "Test Consumption",
-                    forInternalContext,
-                    null);
-
-            // Assert
-            result.InternalContext.Should().NotBeEmpty();
-            result.InternalContext.Should().ContainKey("groupId");
-            result.InternalContext.Should().ContainValue(groupId);
-            result.InternalContext.Should().ContainKey("Reason");
-            result.InternalContext.Should().ContainValue("Test Consumption");
-        }
-
-        [Fact]
-        public void ConsumptionMetricsRecordedSubOwnerContextSuccess()
+        public void ConsumptionMetricsRecordsAllValues()
         {
             // Arrange
             var subscriptionId = Guid.NewGuid();
             var resourceId = Guid.NewGuid();
             var meter = "SMS/BYO/Send SMS";
-            var resourceType = "SMS Provider";
-            var resourceName = "FRIE PROD";
+            var amount = 1234;
+            var reason = "Any old reason will do";
 
-            Dictionary<string, string> subOwnerContext = new Dictionary<string, string>();
-            subOwnerContext.Add("Resource Type", resourceType);
-            subOwnerContext.Add("Resource Name", resourceName);
+            var internalContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
+            var subOwnerContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
 
             // Act
-            var result = TestRecord(
+            var result = CaptureDestinationRecord(
                     subscriptionId: subscriptionId,
                     resourceId: resourceId,
                     meter: meter,
-                    amount: 1,
-                    reason: "Test Consumption",
-                    null,
-                    subOwnerContext);
+                    amount: amount,
+                    reason: reason,
+                    internalContext: internalContext,
+                    subOwnerContext: subOwnerContext);
 
             // Assert
-            result.SubscriptionOwnerContext.Should().NotBeEmpty();
-            result.SubscriptionOwnerContext.Should().ContainKey("Resource Type");
-            result.SubscriptionOwnerContext.Should().ContainValue(resourceType);
-            result.SubscriptionOwnerContext.Should().ContainKey("Resource Name");
-            result.SubscriptionOwnerContext.Should().ContainValue(resourceName);
-        }
-
-        [Fact]
-        public void ConsumptionMetricsRecordedMessageTemplateArgsSuccess()
-        {
-            // Arrange
-            var subscriptionId = Guid.NewGuid();
-            var resourceId = Guid.NewGuid();
-            var meter = "SMS/BYO/Send SMS";
-            var messageTemplateArgsCount = 4;
-
-            // Act
-            var result = TestRecord(
-                    subscriptionId: subscriptionId,
-                    resourceId: resourceId,
-                    meter: meter,
-                    amount: 1,
-                    reason: "Test Consumption",
-                    null,
-                    null);
-
-            // Assert
-            result.GetMessageTemplateArgs().Should().NotBeEmpty();
-            result.GetMessageTemplateArgs().Length.Should().Be(messageTemplateArgsCount);
-            result.GetMessageTemplateArgs().Contains(subscriptionId);
-            result.GetMessageTemplateArgs().Contains(resourceId);
-            result.GetMessageTemplateArgs().Contains(meter);
+            result.Should().BeEquivalentTo(
+                new ConsumptionMetricsDestinationRecord(
+                    subscriptionId,
+                    resourceId,
+                    meter,
+                    amount,
+                    reason,
+                    internalContext,
+                    subOwnerContext));
         }
     }
 }
