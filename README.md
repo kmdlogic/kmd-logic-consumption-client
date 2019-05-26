@@ -1,15 +1,17 @@
 # KMD Logic Consumption Client
 
-This is a dotnet client library for KMD Logic billing, which allows applications to record consumption metrics reliably and securely.
+This is a dotnet client library for KMD Logic which allows recording consumption metrics reliably and securely.
 
-The KMD Logic Consumption client utilises many modern concepts from [Serilog](https://serilog.net/) and [Seq](https://getseq.net/), such as [Message Templates](https://messagetemplates.org/) and ingestion endpoints capable of understanding [CLEF](https://docs.getseq.net/docs/posting-raw-events).
+The KMD Logic Consumption client utilises modern concepts such as [Message Templates](https://messagetemplates.org/) and the [Compact Log Event Format (CLEF)](https://github.com/serilog/serilog-formatting-compact#format-details). To reliably record and ingest consumption metrics, we send events to an [Azure EventHub](https://docs.microsoft.com/en-us/azure/event-hubs/) leveraging the [Kmd.Logic.Audit.Client.SerilogAzureEventHubs](https://www.nuget.org/packages/Kmd.Logic.Audit.Client.SerilogAzureEventHubs). 
 
-## How to use this client library
+## How to use this library
+
+### Reference the `Kmd.Logic.Consumption.Client` NuGet package
 
 In projects or components where you need to *generate* consumption metrics, add a NuGet package reference to [Kmd.Logic.Consumption.Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client), and use the `IConsumptionMetrics` interface like this:
 
 ```csharp
-consumptionClient
+consumption
     .ForSubscriptionOwnerContext("ReportableField", "Anything")
     .ForInternalContext("EventNumber", "${eventNumber}")
     .Record(
@@ -20,26 +22,28 @@ consumptionClient
         reason: "Just testing");
 ```
 
- * Add **Kmd.Logic.Consumption.Client.AuditClient** library from nuget package [Consumption Audit Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client.AuditClient/) to consume Audit client destination which is implemented `IConsumptionMetricsDestination`.
+### Choose your metrics destination
 
-The container(destination) will vary based on customer's implementation . Here we are referring the container(destination)  **kmd.logic.audit.client.serilogazureeventhubs**. This library can be downloaded from [Serilog Azure Eventhubs](https://www.nuget.org/packages/Kmd.Logic.Audit.Client.SerilogAzureEventHubs/). Consumer can change the exiting destination by using defined destination. The defined destination has to be injected into concrete class of `IConsumptionMetrics`. Example as in below:
-```csharp
-var auditClient = new SerilogAzureEventHubsAuditClient(clientConfig);            
-var auditConsumptionDestination = new AuditClientConsumptionMetricsDestination(auditClient);
-var consumptionClient = new ConsumptionClient(auditConsumptionDestination);         
-```
+### Use the `Kmd.Logic.Audit.Client`
 
+TODO
 
 > NOTE: We have implemented this functionality initially by reusing [Serilog](https://github.com/serilog/serilog), the [Seq sink](https://github.com/serilog/serilog-sinks-seq) and the [KMDLogic audit](https://github.com/kmdlogic/kmd-logic-audit-client). We intend to publish a version of this client library in the future that has no such external dependencies. If this issue impacts you negatively, please let us know.
 
-## How to contribute
+### Create your own backend
 
-1. Fork the project & clone locally.
-2. Create an upstream remote and sync your local copy before you branch.
-3. Branch for each separate piece of work.
-4. Do the work, write good commit messages, and read the CONTRIBUTING file if there is one.
-5. Push to your origin repository.
-6. Create a new PR in GitHub.
+Consumption metrics can be delivered to any `IConsumptionMetricsDestination` implementation. The interface is defined as follows:
+
+```csharp
+public interface IConsumptionMetricsDestination
+{
+    IConsumptionMetricsDestination ForInternalContext(string propertyName, string value);
+    IConsumptionMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value);
+    void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null);
+}
+```
+
+Calling `ForInternalContext` or `ForSubscriptionOwnerContext` will return a new instance that, when `Write` is called, will include those properties in the written metrics event.
 
 ## Contact us
 
