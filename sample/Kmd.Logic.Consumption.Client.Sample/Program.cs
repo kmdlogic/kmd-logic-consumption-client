@@ -52,7 +52,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             using (var auditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
                 var auditConsumptionDestination = new AuditClientConsumptionMetricsDestination(auditClient);
-                var consumptionClient = new ConsumptionClient(auditConsumptionDestination);
+                var consumptionClient = new ConsumptionMetrics(auditConsumptionDestination);
 
                 Log.Information(
                     "Sending {NumberOfEvents} events ({NumberOfThreads} threads) in GroupId {GroupId} to the {EventHubsTopic} topic on EventHubs {EventHubsHost}",

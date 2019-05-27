@@ -17,6 +17,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Logic.Consumption.Clien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Logic.Consumption.Client.Tests", "test\Kmd.Logic.Consumption.Client.Tests\Kmd.Logic.Consumption.Client.Tests.csproj", "{42BABB5D-735A-4A05-B5D5-351A32C1B6C3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{33660A5B-677A-495E-9CA4-A07F5CAA04B1}"
+ProjectSection(SolutionItems) = preProject
+	appveyor.yml = appveyor.yml
+	build.ps1 = build.ps1
+	build.sh = build.sh
+	CHANGES.md = CHANGES.md
+	Directory.Build.props = Directory.Build.props
+	global.json = global.json
+	kmd-logic-consumption-client.sln.DotSettings = kmd-logic-consumption-client.sln.DotSettings
+	LICENSE = LICENSE
+	README.md = README.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
