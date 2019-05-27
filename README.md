@@ -1,17 +1,15 @@
 # KMD Logic Consumption Client
 
-This is a dotnet client library for KMD Logic which allows recording consumption metrics reliably and securely.
+A dotnet client library for the KMD Logic billing, which allows applications to record consumption metrics reliably and securely.
 
-The KMD Logic Consumption client utilises modern concepts such as [Message Templates](https://messagetemplates.org/) and the [Compact Log Event Format (CLEF)](https://github.com/serilog/serilog-formatting-compact#format-details). To reliably record and ingest consumption metrics, we send events to an [Azure EventHub](https://docs.microsoft.com/en-us/azure/event-hubs/) leveraging the [Kmd.Logic.Audit.Client.SerilogAzureEventHubs](https://www.nuget.org/packages/Kmd.Logic.Audit.Client.SerilogAzureEventHubs). 
+The KMD Logic Consumption client utilises many modern concepts from [Serilog](https://serilog.net/) and [Seq](https://getseq.net/), such as [Message Templates](https://messagetemplates.org/) and ingestion endpoints capable of understanding [CLEF](https://docs.getseq.net/docs/posting-raw-events).
 
-## How to use this library
-
-### Reference the `Kmd.Logic.Consumption.Client` NuGet package
+## How to use this client library
 
 In projects or components where you need to *generate* consumption metrics, add a NuGet package reference to [Kmd.Logic.Consumption.Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client), and use the `IConsumptionMetrics` interface like this:
 
 ```csharp
-consumption
+consumptionClient
     .ForSubscriptionOwnerContext("ReportableField", "Anything")
     .ForInternalContext("EventNumber", $"{eventNumber}")
     .Record(
@@ -22,28 +20,13 @@ consumption
         reason: "Just testing");
 ```
 
-### Choose your metrics destination
-
-### Use the `Kmd.Logic.Audit.Client`
-
-TODO
+TODO: explain how to setup and configure a container for `AuditClientConsumptionMetricsDestination`
 
 > NOTE: We have implemented this functionality initially by reusing [Serilog](https://github.com/serilog/serilog), the [Seq sink](https://github.com/serilog/serilog-sinks-seq) and the [KMDLogic audit](https://github.com/kmdlogic/kmd-logic-audit-client). We intend to publish a version of this client library in the future that has no such external dependencies. If this issue impacts you negatively, please let us know.
 
-### Create your own backend
+## How to contribute
 
-Consumption metrics can be delivered to any `IConsumptionMetricsDestination` implementation. The interface is defined as follows:
-
-```csharp
-public interface IConsumptionMetricsDestination
-{
-    IConsumptionMetricsDestination ForInternalContext(string propertyName, string value);
-    IConsumptionMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value);
-    void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null);
-}
-```
-
-Calling `ForInternalContext` or `ForSubscriptionOwnerContext` will return a new instance that, when `Write` is called, will include those properties in the written metrics event.
+TODO
 
 ## Contact us
 
