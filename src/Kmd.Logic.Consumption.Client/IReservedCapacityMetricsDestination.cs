@@ -2,11 +2,11 @@
 
 namespace Kmd.Logic.Consumption.Client
 {
-    public interface IReservedCapcityMetricsDestination
+    public interface IReservedCapacityMetricsDestination
     {
-        IReservedCapcityMetricsDestination ForInternalContext(string propertyName, string value);
+        IReservedCapacityMetricsDestination ForInternalContext(string propertyName, string value);
 
-        IReservedCapcityMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value);
+        IReservedCapacityMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value);
 
         /// <summary>
         /// This is adding more capacity to the resource.

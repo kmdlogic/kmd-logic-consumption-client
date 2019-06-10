@@ -6,9 +6,9 @@ namespace Kmd.Logic.Consumption.Client
 {
     public class ReservedCapacityMetrics : IReservedCapacityMetrics
     {
-        private readonly IReservedCapcityMetricsDestination _destination;
+        private readonly IReservedCapacityMetricsDestination _destination;
 
-        public ReservedCapacityMetrics(IReservedCapcityMetricsDestination destination)
+        public ReservedCapacityMetrics(IReservedCapacityMetricsDestination destination)
         {
             this._destination = destination ?? throw new ArgumentNullException(nameof(destination));
         }

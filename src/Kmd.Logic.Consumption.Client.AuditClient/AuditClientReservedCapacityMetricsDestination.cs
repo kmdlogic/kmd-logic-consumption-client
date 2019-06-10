@@ -3,7 +3,7 @@ using Kmd.Logic.Audit.Client;
 
 namespace Kmd.Logic.Consumption.Client.AuditClient
 {
-    public class AuditClientReservedCapcityMetricsDestination : IReservedCapcityMetricsDestination
+    public class AuditClientReservedCapacityMetricsDestination : IReservedCapacityMetricsDestination
     {
         public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
 
@@ -12,22 +12,22 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
         private readonly IAudit _audit;
         private readonly Func<string, string> _getSubOwnerContextName;
 
-        public AuditClientReservedCapcityMetricsDestination(IAudit audit, Func<string, string> getSubOwnerContextName = null)
+        public AuditClientReservedCapacityMetricsDestination(IAudit audit, Func<string, string> getSubOwnerContextName = null)
         {
             this._audit = audit ?? throw new ArgumentNullException(nameof(audit));
             this._getSubOwnerContextName = getSubOwnerContextName ?? GetDefaultSubOwnerContextName;
         }
 
-        public IReservedCapcityMetricsDestination ForInternalContext(string propertyName, string value)
+        public IReservedCapacityMetricsDestination ForInternalContext(string propertyName, string value)
         {
-            return new AuditClientReservedCapcityMetricsDestination(
+            return new AuditClientReservedCapacityMetricsDestination(
                this._audit.ForContext(propertyName, value),
                this._getSubOwnerContextName);
         }
 
-        public IReservedCapcityMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value)
+        public IReservedCapacityMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value)
         {
-            return new AuditClientReservedCapcityMetricsDestination(
+            return new AuditClientReservedCapacityMetricsDestination(
                  this._audit.ForContext(this._getSubOwnerContextName(propertyName), value),
                  this._getSubOwnerContextName);
         }
