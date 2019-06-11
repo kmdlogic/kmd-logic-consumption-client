@@ -41,7 +41,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
             audit = audit.ForContext("Capacity", "Release");
 
             audit.Write(
-                Template,
+                messageTemplate: Template,
                 amount,
                 meter,
                 resourceId,
@@ -57,7 +57,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
             audit = audit.ForContext("Capacity", "Reserve");
 
             audit.Write(
-                Template,
+                messageTemplate: Template,
                 amount,
                 meter,
                 resourceId,
