@@ -83,7 +83,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
             // Arrange
             var subscriptionId = Guid.NewGuid();
             var resourceId = Guid.NewGuid();
-            var meter = "SMS/BYO/Send SMS";
+            var meter = "Audit/Instance/Capacity";
             var amount = 1;
             var reason = "Any old reason will do";
 

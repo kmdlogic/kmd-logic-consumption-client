@@ -5,7 +5,9 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 {
     public class AuditClientReservedCapacityMetricsDestination : IReservedCapacityMetricsDestination
     {
-        public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
+        public static string ReserveTemplate { get; } = "Reserve capacity {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
+
+        public static string ReleaseTemplate { get; } = "Release capacity {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
 
         public static string GetDefaultSubOwnerContextName(string propertyName) => $"__Sub_{propertyName}";
 
@@ -41,7 +43,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
             audit = audit.ForContext("Capacity", "Release");
 
             audit.Write(
-                messageTemplate: Template,
+                messageTemplate: ReleaseTemplate,
                 amount,
                 meter,
                 resourceId,
@@ -57,7 +59,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
             audit = audit.ForContext("Capacity", "Reserve");
 
             audit.Write(
-                messageTemplate: Template,
+                messageTemplate: ReserveTemplate,
                 amount,
                 meter,
                 resourceId,
