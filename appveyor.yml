@@ -6,6 +6,8 @@ image:
 configuration: Release
 test: off
 build_script:
+  - dotnet --info
+  - dotnet --list-sdks
 - ps: ./build.ps1
 for:
 -
