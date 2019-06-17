@@ -47,7 +47,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             {
                 switch (config.Kind)
                 {
-                    case ConsumptionKind.ReservedAndReleaseCapacity:
+                    case ConsumptionKind.ReserveAndReleaseCapacity:
                         RecordReservedAndReleaseCapacity(
                             auditClient,
                             numberOfEvents: config.NumberOfEvents,
@@ -92,7 +92,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             Log.Information(
                 "Sending {NumberOfEvents} {EventKind} events ({NumberOfThreads} threads) in GroupId {GroupId} to the {EventHubsTopic} topic on EventHubs {EventHubsHost}",
                 numberOfEvents,
-                ConsumptionKind.ReservedAndReleaseCapacity,
+                ConsumptionKind.ReserveAndReleaseCapacity,
                 numberOfThreads,
                 groupId,
                 eventHubsTopic,
@@ -103,7 +103,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             using (Operation.Time(
                 "Sending {NumberOfEvents} {EventKind} events ({NumberOfThreads} threads) in GroupId {GroupId} to the {EventHubsTopic} topic on EventHubs {EventHubsHost}",
                 numberOfEvents,
-                ConsumptionKind.ReservedAndReleaseCapacity,
+                ConsumptionKind.ReserveAndReleaseCapacity,
                 numberOfThreads,
                 groupId,
                 eventHubsTopic,
