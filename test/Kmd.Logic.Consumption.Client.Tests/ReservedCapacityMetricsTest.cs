@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Kmd.Logic.Consumption.Client.Tests
 {
-    public class ReservedCapacityMetricsTest
+    public class eseresesesReservedCapacityMetricsTest
     {
         public static ReservedCapacityDestinationRecord CaptureDestinationRecord(
           Guid subscriptionId,

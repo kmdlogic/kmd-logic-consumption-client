@@ -1,5 +1,12 @@
 0.3.0
-* Improved to capture Reserved Capacity by implementing IReservedCapacityMetrics and IReservedCapacityMetricsDestination interfaces
+* Added the ability to record reserved capacity. Use this when a product/service is billed by an amount of capacity reserved for a period of time. Call the `IReservedCapacityMetrics.Increase(...)` method to record that some amount of capacity was reserved, then call `IReservedCapacityMetrics.Decrease(...)` to record that some reserved capacity was released. 
+
+```c#
+
+reservedCapacity
+    .Increase(
+
+```
 
 0.2.0
 * Fixed `resourceId` and `subscriptionId` being in the wrong message template positions
