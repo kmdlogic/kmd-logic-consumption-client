@@ -5,10 +5,6 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 {
     public class AuditClientReservedCapacityMetricsDestination : IReservedCapacityMetricsDestination
     {
-        public static string ReserveTemplate { get; } = "Reserve capacity {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
-
-        public static string ReleaseTemplate { get; } = "Release capacity {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
-
         public static string GetDefaultSubOwnerContextName(string propertyName) => $"__Sub_{propertyName}";
 
         private readonly IAudit _audit;
@@ -34,34 +30,32 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
                  this._getSubOwnerContextName);
         }
 
-        public void ReleaseCapacity(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null)
+        public void ReserveCapacity(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
         {
             var audit = reason == null
                        ? this._audit
                        : this._audit.ForContext("Reason", reason);
 
-            audit = audit.ForContext("Capacity", "Release");
-
             audit.Write(
-                messageTemplate: ReleaseTemplate,
+                messageTemplate: "Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}",
                 amount,
                 meter,
+                dateTime,
                 resourceId,
                 subscriptionId);
         }
 
-        public void ReserveCapacity(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null)
+        public void ReleaseCapacity(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
         {
             var audit = reason == null
                        ? this._audit
                        : this._audit.ForContext("Reason", reason);
 
-            audit = audit.ForContext("Capacity", "Reserve");
-
             audit.Write(
-                messageTemplate: ReserveTemplate,
+                messageTemplate: "Decreased reserved capacity by {Amount} for {Meter} at {DecreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}",
                 amount,
                 meter,
+                dateTime,
                 resourceId,
                 subscriptionId);
         }

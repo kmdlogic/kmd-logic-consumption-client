@@ -9,16 +9,16 @@ namespace Kmd.Logic.Consumption.Client.Tests
 {
     public class ReserveAndReleaseCapacityMetricsTest
     {
-        public static ReservedCapacityDestinationRecord CaptureDestinationRecord(
+        public static ReserveOrReleaseCapacityRecord CaptureDestinationRecord(
           Guid subscriptionId,
           Guid resourceId,
-          DateTimeOffset reservedCapacityDateTime,
+          DateTimeOffset dateTime,
           string meter,
           int amount,
           string reason,
           IDictionary<string, string> internalContext,
           IDictionary<string, string> subOwnerContext,
-          bool isIncreaseReservedCapacity)
+          string eventMessageTemplate)
         {
             var mockedDestination = new Mock<IReservedCapacityMetricsDestination>();
 
@@ -34,51 +34,60 @@ namespace Kmd.Logic.Consumption.Client.Tests
                 .Callback((string propertyName, string value) => capturedSubOwnerContext.Add(propertyName, value))
                 .Returns(mockedDestination.Object);
 
-            var reservedCapacitySubscriptionId = default(Guid);
-            var reservedCapacityResourceId = default(Guid);
-            var reservedCapacityMeter = default(string);
-            var reservedCapacityAmount = default(int);
-            var reservedCapacityReason = default(string);
+            var capturedSubscriptionId = default(Guid);
+            var capturedResourceId = default(Guid);
+            var capturedDateTime = default(DateTimeOffset);
+            var capturedMeter = default(string);
+            var capturedAmount = default(int);
+            var capturedReason = default(string);
 
             mockedDestination
-                .Setup(d => d.ReserveCapacity(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-                .Callback((Guid callbackSubscriptionId, Guid callbackResourceId, string callbackMeter, int callbackAmount, string callbackReason) =>
-                    (reservedCapacitySubscriptionId, reservedCapacityResourceId, reservedCapacityMeter, reservedCapacityAmount, reservedCapacityReason) =
-                        (callbackSubscriptionId, callbackResourceId, callbackMeter, callbackAmount, callbackReason));
+                .Setup(d => d.ReserveCapacity(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
+                .Callback((Guid callbackSubscriptionId, Guid callbackResourceId, DateTimeOffset callbackDateTime, string callbackMeter, int callbackAmount, string callbackReason) =>
+                    (capturedSubscriptionId, capturedResourceId, capturedDateTime, capturedMeter, capturedAmount, capturedReason) =
+                        (callbackSubscriptionId, callbackResourceId, callbackDateTime, callbackMeter, callbackAmount, callbackReason));
 
             mockedDestination
-              .Setup(d => d.ReleaseCapacity(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-              .Callback((Guid callbackSubscriptionId, Guid callbackResourceId, string callbackMeter, int callbackAmount, string callbackReason) =>
-                  (reservedCapacitySubscriptionId, reservedCapacityResourceId, reservedCapacityMeter, reservedCapacityAmount, reservedCapacityReason) =
-                      (callbackSubscriptionId, callbackResourceId, callbackMeter, callbackAmount, callbackReason));
+              .Setup(d => d.ReleaseCapacity(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
+              .Callback((Guid callbackSubscriptionId, Guid callbackResourceId, DateTimeOffset callbackDateTime, string callbackMeter, int callbackAmount, string callbackReason) =>
+                  (capturedSubscriptionId, capturedResourceId, capturedDateTime, capturedMeter, capturedAmount, capturedReason) =
+                    (callbackSubscriptionId, callbackResourceId, callbackDateTime, callbackMeter, callbackAmount, callbackReason));
 
             IReservedCapacityMetrics reservedCapacity = new ReservedCapacityMetrics(mockedDestination.Object);
+
+            // Act
             reservedCapacity = internalContext?.Aggregate(reservedCapacity, (client, kvp) => client.ForInternalContext(kvp.Key, kvp.Value)) ?? reservedCapacity;
             reservedCapacity = subOwnerContext?.Aggregate(reservedCapacity, (client, kvp) => client.ForSubscriptionOwnerContext(kvp.Key, kvp.Value)) ?? reservedCapacity;
 
-            if (isIncreaseReservedCapacity)
+            if (eventMessageTemplate.StartsWith("Increased", StringComparison.InvariantCultureIgnoreCase))
             {
-                reservedCapacity.Increase(subscriptionId, resourceId, reservedCapacityDateTime, meter, amount, reason);
+                reservedCapacity.Increase(subscriptionId, resourceId, dateTime, meter, amount, reason);
+            }
+            else if (eventMessageTemplate.StartsWith("Decreased", StringComparison.InvariantCultureIgnoreCase))
+            {
+                reservedCapacity.Decrease(subscriptionId, resourceId, dateTime, meter, amount, reason);
             }
             else
             {
-                reservedCapacity.Decrease(subscriptionId, resourceId, reservedCapacityDateTime, meter, amount, reason);
+                throw new Exception($"Unhandled message template: {eventMessageTemplate}");
             }
 
-            return new ReservedCapacityDestinationRecord(
-                subscriptionId: reservedCapacitySubscriptionId,
-                resourceId: reservedCapacityResourceId,
-                meter: reservedCapacityMeter,
-                amount: reservedCapacityAmount,
-                reason: reservedCapacityReason,
+            return new ReserveOrReleaseCapacityRecord(
+                eventMessageTemplate: eventMessageTemplate,
+                subscriptionId: capturedSubscriptionId,
+                resourceId: capturedResourceId,
+                dateTime: capturedDateTime,
+                meter: capturedMeter,
+                amount: capturedAmount,
+                reason: capturedReason,
                 internalContext: capturedInternalContext,
                 subscriptionOwnerContext: capturedSubOwnerContext);
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void IncreaseOrDecreaseReservedCapacityMetricsAllValues(bool isIncreaseReservedCapacity)
+        [InlineData("Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData("Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        public void IncreaseOrDecreaseReservedCapacityMetricsAllValues(string eventMessageTemplate)
         {
             // Arrange
             var subscriptionId = Guid.NewGuid();
@@ -86,38 +95,29 @@ namespace Kmd.Logic.Consumption.Client.Tests
             var meter = "Audit/Instance/Capacity";
             var amount = 1;
             var reason = "Any old reason will do";
-
             var internalContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
             var subOwnerContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
-            DateTimeOffset reservedCapacityDateTime = DateTimeOffset.Now;
+            var dateTime = DateTimeOffset.Now;
 
             // Act
             var result = CaptureDestinationRecord(
-                    subscriptionId: subscriptionId,
-                    resourceId: resourceId,
-                    reservedCapacityDateTime: reservedCapacityDateTime,
-                    meter: meter,
-                    amount: amount,
-                    reason: reason,
-                    internalContext: internalContext,
-                    subOwnerContext: subOwnerContext,
-                    isIncreaseReservedCapacity);
+                subscriptionId: subscriptionId,
+                resourceId: resourceId,
+                dateTime: dateTime,
+                meter: meter,
+                amount: amount,
+                reason: reason,
+                internalContext: internalContext,
+                subOwnerContext: subOwnerContext,
+                eventMessageTemplate: eventMessageTemplate);
 
             // Assert
-            // Add IncreaseDateTime and DecreaseDateTime value in SubOwnerContext to verify these values are added.
-            if (isIncreaseReservedCapacity)
-            {
-                subOwnerContext.Add("IncreaseDateTime", reservedCapacityDateTime.UtcTicks.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            }
-            else
-            {
-                subOwnerContext.Add("DecreaseDateTime", reservedCapacityDateTime.UtcTicks.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            }
-
             result.Should().BeEquivalentTo(
-                new ReservedCapacityDestinationRecord(
+                new ReserveOrReleaseCapacityRecord(
+                    eventMessageTemplate,
                     subscriptionId,
                     resourceId,
+                    dateTime,
                     meter,
                     amount,
                     reason,

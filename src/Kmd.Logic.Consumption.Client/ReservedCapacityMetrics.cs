@@ -13,15 +13,23 @@ namespace Kmd.Logic.Consumption.Client
             this._destination = destination ?? throw new ArgumentNullException(nameof(destination));
         }
 
-        public void Decrease(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
+        public void Increase(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
         {
-            this._destination.ForSubscriptionOwnerContext(
-               propertyName: "DecreaseDateTime",
-               value: dateTime.UtcTicks.ToString(System.Globalization.CultureInfo.InvariantCulture));
-
             this._destination.ReserveCapacity(
                 subscriptionId: subscriptionId,
                 resourceId: resourceId,
+                dateTime: dateTime,
+                meter: meter,
+                amount: amount,
+                reason: reason);
+        }
+
+        public void Decrease(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
+        {
+            this._destination.ReleaseCapacity(
+                subscriptionId: subscriptionId,
+                resourceId: resourceId,
+                dateTime: dateTime,
                 meter: meter,
                 amount: amount,
                 reason: reason);
@@ -41,20 +49,6 @@ namespace Kmd.Logic.Consumption.Client
                .ForSubscriptionOwnerContext(
                    propertyName: name,
                    value: value));
-        }
-
-        public void Increase(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
-        {
-            this._destination.ForSubscriptionOwnerContext(
-                propertyName: "IncreaseDateTime",
-                value: dateTime.UtcTicks.ToString(System.Globalization.CultureInfo.InvariantCulture));
-
-            this._destination.ReserveCapacity(
-                subscriptionId: subscriptionId,
-                resourceId: resourceId,
-                meter: meter,
-                amount: amount,
-                reason: reason);
         }
     }
 }
