@@ -30,6 +30,7 @@ ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	setup.ps1 = setup.ps1
 	setup.sh = setup.sh
+	.gitignore = .gitignore
 EndProjectSection
 EndProject
 Global
