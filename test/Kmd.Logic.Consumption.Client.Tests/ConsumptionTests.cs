@@ -18,5 +18,17 @@ namespace Kmd.Logic.Consumption.Client.Tests
         {
             Assert.NotNull(typeof(IConsumptionMetricsDestination));
         }
+
+        [Fact]
+        public void ReservedCapacityMetricsExists()
+        {
+            Assert.NotNull(typeof(IReservedCapacityMetrics));
+        }
+
+        [Fact]
+        public void ReservedCapcityMetricsDestinationExists()
+        {
+            Assert.NotNull(typeof(IReservedCapacityMetricsDestination));
+        }
     }
 }

@@ -6,9 +6,11 @@ The KMD Logic Consumption client utilises many modern concepts from [Serilog](ht
 
 ## How to use this client library
 
-In projects or components where you need to *generate* consumption metrics, add a NuGet package reference to [Kmd.Logic.Consumption.Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client), and use the `IConsumptionMetrics` interface like this:
+In projects or components where you need to *generate* consumption metrics, add a NuGet package reference to [Kmd.Logic.Consumption.Client](https://www.nuget.org/packages/Kmd.Logic.Consumption.Client).
+ 
+Use the `IConsumptionMetrics` interface like this:
 
-```csharp
+```c#
 consumptionClient
     .ForSubscriptionOwnerContext("ReportableField", "Anything")
     .ForInternalContext("EventNumber", $"{eventNumber}")
@@ -20,9 +22,37 @@ consumptionClient
         reason: "Just testing");
 ```
 
-TODO: explain how to setup and configure a container for `AuditClientConsumptionMetricsDestination`
+Use the `IReservedCapacityMetrics` interface like this:
 
-> NOTE: We have implemented this functionality initially by reusing [Serilog](https://github.com/serilog/serilog), the [Seq sink](https://github.com/serilog/serilog-sinks-seq) and the [KMDLogic audit](https://github.com/kmdlogic/kmd-logic-audit-client). We intend to publish a version of this client library in the future that has no such external dependencies. If this issue impacts you negatively, please let us know.
+```c#
+var contextReservedCapacity = reservedCapaty
+    .ForSubscriptionOwnerContext("ReportableField", "Anything")
+    .ForInternalContext("EventNumber", $"{eventNumber}");
+
+// Increase - Reserve capacity
+contextReservedCapacity
+    .Increase(
+        subscriptionId: subscriptionId,
+        resourceId: resourceId,
+        meter: "Audit/Instance/Capacity",
+        amount: 1,
+        dateTime: DateTimeOffset.Now);
+
+// Decrease - release capacity
+contextReservedCapacity
+    .Decrease(
+        subscriptionId: subscriptionId,
+        resourceId: resourceId,
+        meter: "Audit/Instance/Capacity",
+        amount: 1,
+        dateTime: DateTimeOffset.Now);
+```
+
+TODO
+1. explain how to setup and configure a container for `AuditClientConsumptionMetricsDestination`
+2. explain how to setup and configure a container for `AuditClientReservedCapacityMetricsDestination`
+
+> NOTE: We have implemented this functionality initially by reusing [Serilog](https://github.com/serilog/serilog), the [Seq sink](https://github.com/serilog/serilog-sinks-seq) and the [KMD Logic Audit Client](https://github.com/kmdlogic/kmd-logic-audit-client). We intend to publish a version of this client library in the future that has no such external dependencies. If this issue impacts you negatively, please let us know so that we can prioritise appropriately.
 
 ## How to contribute
 

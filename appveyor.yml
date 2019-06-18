@@ -1,17 +1,23 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2017
-  - Ubuntu
+  - Visual Studio 2019
+  - Ubuntu1804
 configuration: Release
-test: off
+test: false
+install:
+  - ps: ./setup.ps1
 build_script:
-- ps: ./build.ps1
+  - ps: dotnet --info
+  - ps: dotnet --list-sdks
+  - ps: ./build.ps1
 for:
 -
   matrix:
     only:
-      - image: Ubuntu
+      - image: Ubuntu1804
+  install:
+  - sh setup.sh
   build_script:
   - dotnet --info
   - dotnet --list-sdks
