@@ -28,6 +28,8 @@ ProjectSection(SolutionItems) = preProject
 	kmd-logic-consumption-client.sln.DotSettings = kmd-logic-consumption-client.sln.DotSettings
 	LICENSE = LICENSE
 	README.md = README.md
+	setup.ps1 = setup.ps1
+	setup.sh = setup.sh
 EndProjectSection
 EndProject
 Global
