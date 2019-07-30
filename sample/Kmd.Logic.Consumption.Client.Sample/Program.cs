@@ -161,6 +161,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             var meter = meterData.Meter;
             var resourceType = consumedAmountData.ResourceType;
             var resourceName = consumedAmountData.ResourceName;
+            var consumedDatetime = consumedAmountData.ConsumedDateTime;
 
             Log.Information(
                 "Sending {NumberOfEvents} {EventKind} events ({NumberOfThreads} threads) in GroupId {GroupId} to the {EventHubsTopic} topic on EventHubs {EventHubsHost}",

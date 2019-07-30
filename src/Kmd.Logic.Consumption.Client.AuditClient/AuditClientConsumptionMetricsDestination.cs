@@ -51,7 +51,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 
             audit = consumedDatetime == null
                       ? audit
-                      : audit.ForContext(this._getSubOwnerContextName("LogConsumedDatetime"), consumedDatetime);
+                      : audit.ForContext(this._getSubOwnerContextName("consumedDatetime"), consumedDatetime);
 
             audit.Write(
                 Template,

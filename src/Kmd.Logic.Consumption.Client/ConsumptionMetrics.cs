@@ -32,7 +32,7 @@ namespace Kmd.Logic.Consumption.Client
             this._destination.Write(subscriptionId, resourceId, meter, amount, reason);
         }
 
-        // overloaded record to log date time 
+        // overloaded record to log date time
         public void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, DateTimeOffset consumedDatetime, string reason = null)
         {
             this._destination.Write(subscriptionId, resourceId, meter, amount, consumedDatetime, reason);
