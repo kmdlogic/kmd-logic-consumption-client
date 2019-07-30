@@ -16,53 +16,50 @@ namespace Kmd.Logic.Consumption.Client.Tests
             IReadOnlyList<(string, string)> emptyContext = Array.Empty<(string, string)>();
             return new[]
                 {
-                    //(subscriptionId: new Guid("00000000-0000-0000-0000-000000000000"),
-                    //    resourceId: new Guid("00000000-0000-0000-0000-000000000000"), meter: default(string), amount: 0,
-                    //    reason: default(string),
-                    //    logConsumedDatetime : DateTimeOffset.Now,
-                    //    internalContext: emptyContext,
-                    //    subOwnerContext: emptyContext),
+                    (subscriptionId: new Guid("00000000-0000-0000-0000-000000000000"),
+                        resourceId: new Guid("00000000-0000-0000-0000-000000000000"), meter: default(string), amount: 0,
+                        reason: default(string),
+                        internalContext: emptyContext,
+                        subOwnerContext: emptyContext),
 
-                    //(subscriptionId: new Guid("7DB79D7D-18B4-45BA-A5F6-323990D82278"),
-                    //    resourceId: new Guid("E7A6693C-4C74-4408-AF09-ECA0C51E4F9C"),
-                    //    meter: "SMS/BYO/Sent",
-                    //    amount: 1,
-                    //    reason: default(string),
-                    //    logConsumedDatetime: DateTimeOffset.Now,
-                    //    internalContext: emptyContext,
-                    //    subOwnerContext: emptyContext),
+                    (subscriptionId: new Guid("7DB79D7D-18B4-45BA-A5F6-323990D82278"),
+                        resourceId: new Guid("E7A6693C-4C74-4408-AF09-ECA0C51E4F9C"),
+                        meter: "SMS/BYO/Sent",
+                        amount: 1,
+                        reason: default(string),
+                        internalContext: emptyContext,
+                        subOwnerContext: emptyContext),
 
-                    //(subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
-                    //    resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                    //    amount: 2, reason: "large, sent as two",
-                    //    internalContext: emptyContext,
-                    //    subOwnerContext: emptyContext),
+                    (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                        resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
+                        amount: 2, reason: "large, sent as two",
+                        internalContext: emptyContext,
+                        subOwnerContext: emptyContext),
 
-                    //(subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
-                    //    resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                    //    amount: 2, reason: "large, sent as two",
-                    //    internalContext: new[]
-                    //    {
-                    //        ("i1", "v1"),
-                    //        ("i2", "v2"),
-                    //    },
-                    //    subOwnerContext: emptyContext),
+                    (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                        resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
+                        amount: 2, reason: "large, sent as two",
+                        internalContext: new[]
+                        {
+                            ("i1", "v1"),
+                            ("i2", "v2"),
+                        },
+                        subOwnerContext: emptyContext),
 
-                    //(subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
-                    //    resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                    //    amount: 2, reason: "large, sent as two",
-                    //    internalContext: emptyContext,
-                    //    subOwnerContext: new[]
-                    //    {
-                    //        ("s1", "v1"),
-                    //        ("s2", "v2"),
-                    //    }),
+                    (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                        resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
+                        amount: 2, reason: "large, sent as two",
+                        internalContext: emptyContext,
+                        subOwnerContext: new[]
+                        {
+                            ("s1", "v1"),
+                            ("s2", "v2"),
+                        }),
 
                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
                         amount: 2,
                         reason: "both internal and sub owner context",
-                        consumedDatetime : DateTimeOffset.Now,
                         internalContext: new[]
                         {
                             ("i1", "v1"),
@@ -74,7 +71,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
                             ("s2", "v2"),
                         }),
                 }
-                .Select(x => new object[] { x.subscriptionId, x.resourceId, x.meter, x.amount, x.reason, x.consumedDatetime, x.internalContext, x.subOwnerContext })
+                .Select(x => new object[] { x.subscriptionId, x.resourceId, x.meter, x.amount, x.reason, x.internalContext, x.subOwnerContext })
                 .ToArray();
         }
 
@@ -86,7 +83,6 @@ namespace Kmd.Logic.Consumption.Client.Tests
             string meter,
             int amount,
             string reason,
-            DateTimeOffset consumedDatetime,
             IReadOnlyList<(string name, string value)> internalContext,
             IReadOnlyList<(string name, string value)> subOwnerContext)
         {
@@ -121,11 +117,10 @@ namespace Kmd.Logic.Consumption.Client.Tests
                 resourceId: resourceId,
                 meter: meter,
                 amount: amount,
-                consumedDatetime: consumedDatetime,
                 reason: reason);
 
             // assert
-            var expectedPropertyValues = new object[] { amount, meter, resourceId, subscriptionId, consumedDatetime, reason };
+            var expectedPropertyValues = new object[] { amount, meter, resourceId, subscriptionId };
             var expectedTemplate = AuditClientConsumptionMetricsDestination.Template;
             auditMock.Verify(a => a.Write(expectedTemplate, expectedPropertyValues), times: Times.Once);
             if (reason != null)
