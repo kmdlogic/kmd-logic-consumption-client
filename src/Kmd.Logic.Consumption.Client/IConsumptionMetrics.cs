@@ -16,6 +16,16 @@ namespace Kmd.Logic.Consumption.Client
         void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null);
 
         /// <summary>
+        /// Records the consumption amount against the meter in the subscription for the resource id with date and time of consumption
+        /// (and optionally give a free text reason).
+        /// </summary>
+        /// <remarks>
+        /// When a subscription user has consumed resources (e.g. sent an SMS or performed a backup),
+        /// we call this method to record what was "consumed" with date and time.
+        /// </remarks>
+        void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, DateTimeOffset consumedDatetime, string reason = null);
+
+        /// <summary>
         /// Adds arbitrary property names and values (context) to the consumption metrics record. Use this method
         /// to give additional context to internal (e.g. DevOps) teams regarding how and when the consumption happened.
         /// </summary>

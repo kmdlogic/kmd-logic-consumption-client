@@ -5,7 +5,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 {
     public class AuditClientConsumptionMetricsDestination : IConsumptionMetricsDestination
     {
-        public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}";
+        public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId} recorded DateTime {ConsumedDatetime}";
 
         public static string GetDefaultSubOwnerContextName(string propertyName) => $"__Sub_{propertyName}";
 
@@ -34,16 +34,32 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 
         public void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null)
         {
+            this.Write(
+                subscriptionId: subscriptionId,
+                resourceId: resourceId,
+                meter: meter,
+                amount: amount,
+                consumedDatetime: DateTimeOffset.Now,
+                reason: reason);
+        }
+
+        public void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, DateTimeOffset consumedDatetime, string reason = null)
+        {
             var audit = reason == null
-                        ? this._audit
-                        : this._audit.ForContext("Reason", reason);
+                       ? this._audit
+                       : this._audit.ForContext(this._getSubOwnerContextName("Reason"), reason);
+
+            audit = consumedDatetime == null
+                      ? audit
+                      : audit.ForContext(this._getSubOwnerContextName("LogConsumedDatetime"), consumedDatetime);
 
             audit.Write(
                 Template,
                 amount,
                 meter,
                 resourceId,
-                subscriptionId);
+                subscriptionId,
+                consumedDatetime);
         }
     }
 }

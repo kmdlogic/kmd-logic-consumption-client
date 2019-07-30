@@ -1,3 +1,5 @@
+using System;
+
 namespace Kmd.Logic.Consumption.Client.Sample
 {
     internal class AppConfigConsumedAmountData
@@ -8,6 +10,8 @@ namespace Kmd.Logic.Consumption.Client.Sample
 
         public int Amount { get; set; } = 1;
 
-        public string Reason { get; set; } = "Just testing";
+        public DateTimeOffset ConsumedDateTime { get; set; } = DateTimeOffset.Now;
+
+        public string Reason { get; set; } = "Just testing with date time";
     }
 }

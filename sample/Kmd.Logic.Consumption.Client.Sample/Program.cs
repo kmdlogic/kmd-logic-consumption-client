@@ -65,6 +65,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
                             eventHubsTopic: eventHubsTopic,
                             eventHubsHost: $"{eventHubsHost}",
                             meterData: config.MeterData,
+                            consumedDateTime: DateTimeOffset.Now,
                             consumedAmountData: config.ConsumedAmountData);
                         break;
                     default:
@@ -148,6 +149,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
             int numberOfThreads,
             string eventHubsTopic,
             string eventHubsHost,
+            DateTimeOffset consumedDateTime,
             AppConfigMeterData meterData,
             AppConfigConsumedAmountData consumedAmountData)
         {
@@ -167,7 +169,8 @@ namespace Kmd.Logic.Consumption.Client.Sample
                 numberOfThreads,
                 groupId,
                 eventHubsTopic,
-                eventHubsHost);
+                eventHubsHost,
+                consumedDateTime);
 
             var consumptionClient = new ConsumptionMetrics(auditConsumptionDestination);
 
@@ -197,6 +200,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
                                 resourceId: resourceId,
                                 meter: meter,
                                 amount: consumedAmountData.Amount,
+                                consumedDatetime: consumedAmountData.ConsumedDateTime,
                                 reason: consumedAmountData.Reason);
 
                         return eventNumber;

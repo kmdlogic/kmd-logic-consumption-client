@@ -9,5 +9,7 @@ namespace Kmd.Logic.Consumption.Client
         IConsumptionMetricsDestination ForSubscriptionOwnerContext(string propertyName, string value);
 
         void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null);
+
+        void Write(Guid subscriptionId, Guid resourceId, string meter, int amount, DateTimeOffset consumedDateTime, string reason = null);
     }
 }
