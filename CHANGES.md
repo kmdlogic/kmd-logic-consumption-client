@@ -1,3 +1,6 @@
+0.4.0
+* Allow to record event with date and time.
+
 0.3.0
 * Added the ability to record reserved capacity. Use this when a product/service is billed by an amount of capacity reserved for a period of time. Call the `IReservedCapacityMetrics.Increase(...)` method to record that some amount of capacity was reserved, then call `IReservedCapacityMetrics.Decrease(...)` to record that some reserved capacity was released. 
 
