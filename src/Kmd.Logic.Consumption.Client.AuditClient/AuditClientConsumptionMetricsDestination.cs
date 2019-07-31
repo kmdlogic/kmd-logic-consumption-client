@@ -63,8 +63,8 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
                 amount,
                 meter,
                 resourceId,
-                subscriptionId,
-                consumedDatetime);
+                consumedDatetime,
+                subscriptionId);
         }
     }
 }
