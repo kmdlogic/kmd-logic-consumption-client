@@ -10,6 +10,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
             Guid resourceId,
             string meter,
             int amount,
+            DateTimeOffset consumedDateTime,
             string reason,
             IDictionary<string, string> internalContext,
             IDictionary<string, string> subscriptionOwnerContext)
@@ -18,6 +19,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
             this.ResourceId = resourceId;
             this.Meter = meter;
             this.Amount = amount;
+            this.ConsumedDateTime = consumedDateTime;
             this.Reason = reason;
             this.InternalContext = internalContext;
             this.SubscriptionOwnerContext = subscriptionOwnerContext;
@@ -30,6 +32,8 @@ namespace Kmd.Logic.Consumption.Client.Tests
         public string Meter { get; }
 
         public int Amount { get; }
+
+        public DateTimeOffset ConsumedDateTime { get; }
 
         public string Reason { get; }
 

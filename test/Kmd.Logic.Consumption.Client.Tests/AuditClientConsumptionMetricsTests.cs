@@ -18,25 +18,31 @@ namespace Kmd.Logic.Consumption.Client.Tests
                 {
                     (subscriptionId: new Guid("00000000-0000-0000-0000-000000000000"),
                         resourceId: new Guid("00000000-0000-0000-0000-000000000000"), meter: default(string), amount: 0,
+                        consumedDateTime: DateTimeOffset.Now,
                         reason: default(string),
                         internalContext: emptyContext,
                         subOwnerContext: emptyContext),
 
                     (subscriptionId: new Guid("7DB79D7D-18B4-45BA-A5F6-323990D82278"),
                         resourceId: new Guid("E7A6693C-4C74-4408-AF09-ECA0C51E4F9C"), meter: "SMS/BYO/Sent", amount: 1,
+                        consumedDateTime: DateTimeOffset.Now,
                         reason: default(string),
                         internalContext: emptyContext,
                         subOwnerContext: emptyContext),
 
                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                        amount: 2, reason: "large, sent as two",
+                        amount: 2,
+                        consumedDateTime: DateTimeOffset.Now,
+                        reason: "large, sent as two",
                         internalContext: emptyContext,
                         subOwnerContext: emptyContext),
 
                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                        amount: 2, reason: "large, sent as two",
+                        amount: 2,
+                        consumedDateTime: DateTimeOffset.Now,
+                        reason: "large, sent as two",
                         internalContext: new[]
                         {
                             ("i1", "v1"),
@@ -46,7 +52,9 @@ namespace Kmd.Logic.Consumption.Client.Tests
 
                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
-                        amount: 2, reason: "large, sent as two",
+                        amount: 2,
+                        consumedDateTime: DateTimeOffset.Now,
+                        reason: "large, sent as two",
                         internalContext: emptyContext,
                         subOwnerContext: new[]
                         {
@@ -57,6 +65,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
                         amount: 2,
+                        consumedDateTime: DateTimeOffset.Now,
                         reason: "both internal and sub owner context",
                         internalContext: new[]
                         {
@@ -69,7 +78,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
                             ("s2", "v2"),
                         }),
                 }
-                .Select(x => new object[] { x.subscriptionId, x.resourceId, x.meter, x.amount, x.reason, x.internalContext, x.subOwnerContext })
+                .Select(x => new object[] { x.subscriptionId, x.resourceId, x.meter, x.amount, x.consumedDateTime, x.reason, x.internalContext, x.subOwnerContext })
                 .ToArray();
         }
 
@@ -80,6 +89,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
             Guid resourceId,
             string meter,
             int amount,
+            DateTimeOffset consumedDateTime,
             string reason,
             IReadOnlyList<(string name, string value)> internalContext,
             IReadOnlyList<(string name, string value)> subOwnerContext)
@@ -115,10 +125,11 @@ namespace Kmd.Logic.Consumption.Client.Tests
                 resourceId: resourceId,
                 meter: meter,
                 amount: amount,
+                consumedDateTime: consumedDateTime,
                 reason: reason);
 
             // assert
-            var expectedPropertyValues = new object[] { amount, meter, resourceId, subscriptionId };
+            var expectedPropertyValues = new object[] { amount, meter, resourceId, consumedDateTime, subscriptionId };
             var expectedTemplate = AuditClientConsumptionMetricsDestination.Template;
             auditMock.Verify(a => a.Write(expectedTemplate, expectedPropertyValues), times: Times.Once);
             if (reason != null)
@@ -144,7 +155,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
         public void TheDefaultTemplateIsCorrect()
         {
             AuditClientConsumptionMetricsDestination.Template.Should()
-                .Be("Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId}");
+                .Be("Consumed {Amount} for {Meter} on resource {ResourceId} at {ConsumedDateTime} in subscription {SubscriptionId}");
         }
 
         [Theory]

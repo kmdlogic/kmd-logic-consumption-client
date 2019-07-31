@@ -27,9 +27,9 @@ namespace Kmd.Logic.Consumption.Client
                     value: value));
         }
 
-        public void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, string reason = null)
+        public void Record(Guid subscriptionId, Guid resourceId, string meter, int amount, DateTimeOffset consumedDateTime, string reason = null)
         {
-            this._destination.Write(subscriptionId, resourceId, meter, amount, reason);
+            this._destination.Write(subscriptionId, resourceId, meter, amount, consumedDateTime, reason);
         }
     }
 }
