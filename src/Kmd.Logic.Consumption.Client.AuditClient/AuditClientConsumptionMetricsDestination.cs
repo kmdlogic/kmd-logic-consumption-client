@@ -5,7 +5,7 @@ namespace Kmd.Logic.Consumption.Client.AuditClient
 {
     public class AuditClientConsumptionMetricsDestination : IConsumptionMetricsDestination
     {
-        public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} in subscription {SubscriptionId} recorded DateTime {ConsumedDatetime}";
+        public static string Template { get; } = "Consumed {Amount} for {Meter} on resource {ResourceId} at {ConsumedDatetime} in subscription {SubscriptionId}";
 
         public static string GetDefaultSubOwnerContextName(string propertyName) => $"__Sub_{propertyName}";
 
