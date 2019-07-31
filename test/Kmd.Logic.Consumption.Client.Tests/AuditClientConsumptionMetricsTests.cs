@@ -129,7 +129,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
             auditMock.Verify(a => a.Write(expectedTemplate, expectedPropertyValues), times: Times.Once);
             if (reason != null)
             {
-                auditMock.Verify(a => a.ForContext("z", reason, false), Times.Once);
+                auditMock.Verify(a => a.ForContext("Reason", reason, false), Times.Once);
             }
 
             foreach (var (name, value) in internalContext)
