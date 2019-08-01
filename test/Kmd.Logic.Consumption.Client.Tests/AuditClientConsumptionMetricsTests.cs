@@ -95,7 +95,7 @@ namespace Kmd.Logic.Consumption.Client.Tests
                             ("s2", "v2"),
                         }),
 
-                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                    (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"),
                         meter: "SMS/Logic/Sent",
                         amount: 2,

@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <Description>A client library for KMD Logic Consumption</Description>
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>0.4.0</VersionPrefix>
     <Authors>KMD</Authors>
     <PackageTags>kmd;logic;consumption</PackageTags>
     <PackageIconUrl>https://console.kmdlogic.io/favicon-32x32.png</PackageIconUrl>
