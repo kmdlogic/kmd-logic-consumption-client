@@ -66,7 +66,41 @@ namespace Kmd.Logic.Consumption.Client.Tests
                         resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"), meter: "SMS/Logic/Sent",
                         amount: 2,
                         consumedDateTime: DateTimeOffset.Now,
-                        reason: "both internal and sub owner context",
+                        reason: "test",
+                        internalContext: new[]
+                        {
+                            ("i1", "v1"),
+                            ("i2", "v2"),
+                        },
+                        subOwnerContext: new[]
+                        {
+                            ("s1", "v1"),
+                            ("s2", "v2"),
+                        }),
+
+                    (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                        resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"),
+                        meter: "SMS/Logic/Sent",
+                        amount: 2,
+                        consumedDateTime: DateTimeOffset.Now.AddDays(-2),
+                        reason: "Past date",
+                        internalContext: new[]
+                        {
+                            ("i1", "v1"),
+                            ("i2", "v2"),
+                        },
+                        subOwnerContext: new[]
+                        {
+                            ("s1", "v1"),
+                            ("s2", "v2"),
+                        }),
+
+                     (subscriptionId: new Guid("06D859D7-0BD1-444D-89D0-5274477F8C75"),
+                        resourceId: new Guid("FFE473E4-100F-40C6-B31E-FAF996EB2722"),
+                        meter: "SMS/Logic/Sent",
+                        amount: 2,
+                        consumedDateTime: DateTimeOffset.Now.AddDays(+2),
+                        reason: "Past date",
                         internalContext: new[]
                         {
                             ("i1", "v1"),
