@@ -19,7 +19,7 @@ consumptionClient
         resourceId: resourceId,
         meter: "SMS/BYO/Send SMS",
         amount: 1,
-	    consumedDatetime : DatetimeOffset.Now,
+	consumedDatetime : DatetimeOffset.Now,
         reason: "Just testing");
 ```
 
