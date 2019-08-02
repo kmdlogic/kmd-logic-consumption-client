@@ -197,6 +197,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
                                 resourceId: resourceId,
                                 meter: meter,
                                 amount: consumedAmountData.Amount,
+                                consumedDateTime: consumedAmountData.ConsumedDateTime,
                                 reason: consumedAmountData.Reason);
 
                         return eventNumber;
