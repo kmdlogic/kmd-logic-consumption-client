@@ -47,13 +47,13 @@ namespace Kmd.Logic.Consumption.Client.Sample
             {
                 var auditClientWithContext = config.AddAuditIsConsumptionEventTrue
                     ? auditClient.ForContext("IsConsumptionEvent", true)
-                    : auditClient; 
+                    : auditClient;
 
                 switch (config.Kind)
                 {
                     case ConsumptionKind.ReserveAndReleaseCapacity:
                         RecordReservedAndReleaseCapacity(
-                            auditClient,
+                            auditClientWithContext,
                             numberOfEvents: config.NumberOfEvents,
                             numberOfThreads: config.NumberOfThreads,
                             eventHubsTopic: eventHubsTopic,
@@ -63,7 +63,7 @@ namespace Kmd.Logic.Consumption.Client.Sample
                         break;
                     case ConsumptionKind.ConsumedAmount:
                         RecordConsumedAmount(
-                            auditClient,
+                            auditClientWithContext,
                             numberOfEvents: config.NumberOfEvents,
                             numberOfThreads: config.NumberOfThreads,
                             eventHubsTopic: eventHubsTopic,
