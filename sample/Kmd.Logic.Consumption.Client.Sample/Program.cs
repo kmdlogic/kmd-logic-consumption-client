@@ -45,6 +45,10 @@ namespace Kmd.Logic.Consumption.Client.Sample
 
             using (var auditClient = new SerilogAzureEventHubsAuditClient(clientConfig))
             {
+                var auditClientWithContext = config.AddAuditIsConsumptionEventTrue
+                    ? auditClient.ForContext("IsConsumptionEvent", true)
+                    : auditClient; 
+
                 switch (config.Kind)
                 {
                     case ConsumptionKind.ReserveAndReleaseCapacity:

@@ -10,6 +10,8 @@ namespace Kmd.Logic.Consumption.Client.Sample
 
         public string EventHubsConnectionString { get; set; }
 
+        public bool AddAuditIsConsumptionEventTrue { get; set; } = true;
+
         public ConsumptionKind Kind { get; set; } = ConsumptionKind.ConsumedAmount;
 
         public AppConfigMeterData MeterData { get; set; } = new AppConfigMeterData();
