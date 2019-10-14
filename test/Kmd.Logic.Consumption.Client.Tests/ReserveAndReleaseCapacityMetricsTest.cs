@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -82,6 +82,40 @@ namespace Kmd.Logic.Consumption.Client.Tests
                 reason: capturedReason,
                 internalContext: capturedInternalContext,
                 subscriptionOwnerContext: capturedSubOwnerContext);
+        }
+
+        [Theory]
+        [InlineData(0, "Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(0, "Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(-1, "Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(-1, "Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        public void IncreaseOrDecreaseByNonPositiveThrowsArgumentOutOfRangeException(int amount, string eventMessageTemplate)
+        {
+            // Arrange
+            var subscriptionId = Guid.NewGuid();
+            var resourceId = Guid.NewGuid();
+            var meter = "Audit/Instance/Capacity";
+            var reason = "Any old reason will do";
+            var internalContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
+            var subOwnerContext = new Dictionary<string, string> { { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
+            var dateTime = DateTimeOffset.Now;
+
+            // Act
+            Action act = () => CaptureDestinationRecord(
+                subscriptionId: subscriptionId,
+                resourceId: resourceId,
+                dateTime: dateTime,
+                meter: meter,
+                amount: amount,
+                reason: reason,
+                internalContext: internalContext,
+                subOwnerContext: subOwnerContext,
+                eventMessageTemplate: eventMessageTemplate);
+
+            // Assert
+            act.Should()
+                .ThrowExactly<ArgumentOutOfRangeException>()
+                .And.ParamName.Should().Be("amount");
         }
 
         [Theory]

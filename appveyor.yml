@@ -19,6 +19,7 @@ for:
   install:
   - sh setup.sh
   build_script:
+  - export PATH=$HOME/.dotnetcli:$PATH
   - dotnet --info
   - dotnet --list-sdks
   - pwsh -v
