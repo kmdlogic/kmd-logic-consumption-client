@@ -1,5 +1,8 @@
+0.6.0
+* Prevent using negative amounts for reserved capacity
+
 0.5.0
-* Bumped verison to avoid package collision from multiple build accounts.
+* Bumped version to avoid package collision from multiple build accounts.
 
 0.4.0
 * Allow to record event with date and time.
