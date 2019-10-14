@@ -85,6 +85,16 @@ namespace Kmd.Logic.Consumption.Client.Tests
         }
 
         [Theory]
+        [InlineData(0, "Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(0, "Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(-1, "Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        [InlineData(-1, "Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
+        public void IncreaseOrDecreaseByNonPositiveThrowsArgumentOutOfRangeException(int amount, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Theory]
         [InlineData("Increased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
         [InlineData("Decreased reserved capacity by {Amount} for {Meter} at {IncreaseDateTime} on resource {ResourceId} in subscription {SubscriptionId}")]
         public void IncreaseOrDecreaseReservedCapacityMetricsAllValues(string eventMessageTemplate)

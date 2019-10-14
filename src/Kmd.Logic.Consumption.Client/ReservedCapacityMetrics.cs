@@ -15,6 +15,11 @@ namespace Kmd.Logic.Consumption.Client
 
         public void Increase(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
         {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), actualValue: amount, "Amount must be a positive number.");
+            }
+
             this._destination.ReserveCapacity(
                 subscriptionId: subscriptionId,
                 resourceId: resourceId,
@@ -26,6 +31,11 @@ namespace Kmd.Logic.Consumption.Client
 
         public void Decrease(Guid subscriptionId, Guid resourceId, DateTimeOffset dateTime, string meter, int amount, string reason = null)
         {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), actualValue: amount, "Amount must be a positive number.");
+            }
+
             this._destination.ReleaseCapacity(
                 subscriptionId: subscriptionId,
                 resourceId: resourceId,
